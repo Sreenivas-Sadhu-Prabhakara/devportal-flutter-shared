@@ -10,10 +10,12 @@ the **cinematic design system**, the **domain** model, and the **data layer**
 
 ## 📖 System documentation
 
+**Live site:** <https://sreenivas-sadhu-prabhakara.github.io/devportal-flutter-shared/>
+
 The full architecture diagram, roadmap, mock→live **integration path**, deployment
 plan, and a usage **how-to** live in **[`docs/`](docs/)** — a rendered,
-cinematic-dark documentation site that covers the whole polyrepo. Open
-`docs/index.html`, or serve it:
+cinematic-dark documentation site that covers the whole polyrepo. It's published
+via GitHub Pages (`main` → `/docs`). Or open `docs/index.html` locally, or serve it:
 
 ```bash
 python3 -m http.server -d docs 8080   # http://localhost:8080
