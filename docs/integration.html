@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" data-page="integration">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How the mock becomes live: the repository-swap seam, the Drupal BFF, Apigee X APIs, and ForgeRock identity.">
+<meta name="theme-color" content="#0B0B0F">
+<title>Integration Path · Developer Portal Docs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#doc">Skip to content</a>
+<header class="topbar">
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="index.html">
+<svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+  <g stroke="#FF3640" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="32" x2="32" y2="14"/><line x1="32" y1="32" x2="48" y2="23"/>
+    <line x1="32" y1="32" x2="48" y2="41"/><line x1="32" y1="32" x2="32" y2="50"/>
+    <line x1="32" y1="32" x2="16" y2="41"/><line x1="32" y1="32" x2="16" y2="23"/>
+  </g>
+  <g fill="#fff" stroke="#E50914" stroke-width="1.7">
+    <circle cx="32" cy="14" r="4.3"/><circle cx="48" cy="23" r="4.3"/>
+    <circle cx="48" cy="41" r="4.3"/><circle cx="32" cy="50" r="4.3"/>
+    <circle cx="16" cy="41" r="4.3"/><circle cx="16" cy="23" r="4.3"/>
+  </g>
+  <circle cx="32" cy="32" r="10" fill="#E50914" stroke="#08080B"/>
+  <circle cx="32" cy="32" r="3.4" fill="#fff"/>
+</svg><span class="brand-name">Developer&nbsp;Portal</span><span class="brand-badge">Docs</span></a>
+  <nav class="top-links" aria-label="Related">
+    <a href="architecture.html">Architecture</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="how-to.html">How-to</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Documentation">
+<div class="nav-group"><span class="nav-group-label">Understand</span><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="architecture.html">Architecture</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Plan</span><ul>
+<li><a href="roadmap.html">Roadmap & what's next</a></li>
+<li><a href="integration.html" class="active" aria-current="page">Integration path</a></li>
+<li><a href="deployment.html">Deployment</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Use</span><ul>
+<li><a href="how-to.html">How-to guide</a></li>
+</ul></div>
+</nav></aside>
+  <div class="sidebar-scrim" hidden></div>
+  <main class="main">
+    <article class="doc" id="doc">
+      <div class="crumb"><a href="index.html">Docs</a> <span>/</span> Integration path</div>
+      <header class="doc-head">
+        <h1>Integration Path</h1>
+        <p class="lede">How the mock becomes live: the repository-swap seam, the Drupal BFF, Apigee X APIs, and ForgeRock identity.</p>
+      </header>
+      <p><strong>Bottom line:</strong> going live is a <strong>data-layer-only</strong> change. The UI, routing, and
+Bloc layers depend on repository <em>interfaces</em>; today a <strong>Mock</strong> implementation
+satisfies them, tomorrow a <strong>Live</strong> implementation does. Selecting which one is a
+single build-time flag. Nothing above the data layer changes.</p>
+<h2 id="the-swap-seam">The swap seam<a class="headerlink" href="#the-swap-seam" title="Permanent link">#</a></h2>
+<figure class="diagram">
+  <img src="assets/diagrams/integration.svg" alt="The repository swap seam: UI and Cubits depend on repository interfaces; a Mock implementation (active now) and a Live implementation (Phase 4) sit behind them, selected by a dependency-injection flag.">
+  <figcaption><strong>Figure 2.</strong> The repository interface is the seam. The mock decodes JSON through the same path the live HTTP client will use, so the switch is contained.</figcaption>
+</figure>
+
+<p>The clean-architecture boundary does the work:</p>
+<ul>
+<li><strong>Presentation</strong> (pages + Cubits) calls <strong>repository interfaces</strong> only.</li>
+<li>Two implementations satisfy each interface: <code>Mock…Repository</code> (decodes bundled
+  JSON fixtures) and, later, <code>Live…Repository</code> (HTTP → Drupal → Apigee X).</li>
+<li>The <strong>composition root</strong> (<code>app_dependencies.dart</code>) chooses which to inject, keyed
+  on a compile-time define.</li>
+</ul>
+<pre><code class="language-bash"># today — the only wired path
+flutter run -d chrome --dart-define=DATA_SOURCE=mock
+
+# phase 4 — same app, live data
+flutter run -d chrome --dart-define=DATA_SOURCE=live --dart-define=API_BASE=https://portal-api.example.com
+</code></pre>
+<h2 id="why-the-switch-is-cheap">Why the switch is cheap<a class="headerlink" href="#why-the-switch-is-cheap" title="Permanent link">#</a></h2>
+<p>The mock isn't a throwaway. It already decodes JSON into the <strong>same domain
+entities</strong> with the <strong>same return types</strong> a live client will produce. The live
+repository only changes <em>where the JSON comes from</em> — a network fetch instead of a
+bundled asset:</p>
+<pre><code class="language-dart">// Mock (today)
+class MockCatalogRepository implements CatalogRepository {
+  @override
+  Future&lt;List&lt;ApiProduct&gt;&gt; products() async {
+    final raw = jsonDecode(catalogFixtureJson) as List;
+    return raw.map((e) =&gt; ApiProduct.fromJson(e)).toList();
+  }
+}
+
+// Live (Phase 4) — same interface, same entity, same parsing
+class LiveCatalogRepository implements CatalogRepository {
+  LiveCatalogRepository(this._client);
+  final ApiClient _client; // Dio/http wrapper, base URL + bearer token
+
+  @override
+  Future&lt;List&lt;ApiProduct&gt;&gt; products() async {
+    final raw = await _client.getJson('/jsonapi/api_products');
+    return (raw as List).map((e) =&gt; ApiProduct.fromJson(e)).toList();
+  }
+}
+</code></pre>
+<p>Because <code>ApiProduct.fromJson</code> is shared, the contract is enforced in one place. If
+the live payload shape matches the fixtures, <strong>no page, Cubit, or test changes.</strong></p>
+<h2 id="the-live-request-chain">The live request chain<a class="headerlink" href="#the-live-request-chain" title="Permanent link">#</a></h2>
+<p>When <code>DATA_SOURCE=live</code>, a repository call travels:</p>
+<ol>
+<li><strong>Live repository</strong> → builds an HTTPS request with the developer's bearer token.</li>
+<li><strong>Drupal BFF</strong> (<code>JSON:API</code> for catalog/apps/keys; <strong>custom REST</strong> for analytics)
+   receives it, authorizes via the federated session.</li>
+<li><strong>Drupal → Apigee X</strong> using the <strong>GCP service account</strong>: the management API for
+   products/apps/keys/developers, the <strong>stats API</strong> for analytics (which the custom
+   endpoint reshapes into the dashboard's series).</li>
+<li>The response flows back up; the repository maps it to domain entities; the Cubit
+   emits state.</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Why a BFF instead of calling Apigee directly</p>
+<p>The Flutter apps never hold the Apigee service-account credentials, never see
+raw management-API shapes, and never run analytics aggregation in the browser.
+Drupal centralizes auth, reshaping, and caching — and the Apigee Developer
+Portal Kit already implements most of the catalog/app/key surface.</p>
+</div>
+<h2 id="identity-integration">Identity integration<a class="headerlink" href="#identity-integration" title="Permanent link">#</a></h2>
+<p>Identity rides the same phased switch, in the auth layer:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Today (mock)</th>
+<th>Phase 4 (live)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>External</td>
+<td><em>Continue with SSO</em> → demo <code>dev@example.com</code></td>
+<td><strong>OIDC Auth Code + PKCE</strong> vs ForgeRock</td>
+</tr>
+<tr>
+<td>Internal</td>
+<td>Hardcoded <code>admin</code> / <code>passWORD1234#</code></td>
+<td>Corporate SSO via ForgeRock → IAP</td>
+</tr>
+<tr>
+<td>Token use</td>
+<td>None</td>
+<td>Bearer token on every BFF call</td>
+</tr>
+<tr>
+<td>Mapping</td>
+<td>Fixture developer</td>
+<td>ForgeRock → Drupal user → Apigee developer</td>
+</tr>
+</tbody>
+</table>
+<p><code>AuthCubit</code> is the only place that changes: the stub is replaced by a real OIDC
+client (e.g. <code>flutter_appauth</code> / an <code>oidc</code> package), and the resulting access token
+is attached to the <code>ApiClient</code> used by the live repositories.</p>
+<div class="admonition warning">
+<p class="admonition-title">Login is not key issuance</p>
+<p>Signing in proves <em>who the developer is</em>. It does <strong>not</strong> mint API keys —
+those are created when an app is registered, and belong to the app. Keep the
+two flows separate in code and in the UI.</p>
+</div>
+<h2 id="contract-first-so-mock-and-live-agree">Contract-first, so mock and live agree<a class="headerlink" href="#contract-first-so-mock-and-live-agree" title="Permanent link">#</a></h2>
+<p>The fixtures are the <strong>de facto contract</strong> today. Phase 3 promotes them to an
+explicit <strong>OpenAPI</strong> document for the Flutter ↔ Drupal API. That document becomes
+the shared truth: the mock fixtures validate against it, and the live Drupal
+endpoints implement it. Drift is caught at build time, not in production.</p>
+<h2 id="integration-checklist-phase-4">Integration checklist (Phase 4)<a class="headerlink" href="#integration-checklist-phase-4" title="Permanent link">#</a></h2>
+<ul>
+<li>[ ] <code>ApiClient</code> (Dio) with base URL from <code>--dart-define</code>, bearer interceptor,
+      timeout + retry, typed error mapping.</li>
+<li>[ ] <code>Live…Repository</code> for each interface, returning the same entities as the mock.</li>
+<li>[ ] DI branch in <code>app_dependencies.dart</code> on <code>DATA_SOURCE</code>.</li>
+<li>[ ] <code>AuthCubit</code> real OIDC (Auth Code + PKCE); token piped into <code>ApiClient</code>.</li>
+<li>[ ] Error/empty/loading states verified against live latency and failure modes.</li>
+<li>[ ] Contract tests: fixtures and live responses both validate against the OpenAPI.</li>
+</ul>
+      <nav class="pager"><a class="pager-prev" href="roadmap.html"><span>Previous</span><strong>Roadmap & what's next</strong></a><a class="pager-next" href="deployment.html"><span>Next</span><strong>Deployment</strong></a></nav>
+    </article>
+    <aside class="onthispage" aria-label="On this page"><div class="otp-inner"><p class="otp-title">On this page</p><div class="toc">
+<ul>
+<li><a href="#the-swap-seam">The swap seam</a></li>
+<li><a href="#why-the-switch-is-cheap">Why the switch is cheap</a></li>
+<li><a href="#the-live-request-chain">The live request chain</a></li>
+<li><a href="#identity-integration">Identity integration</a></li>
+<li><a href="#contract-first-so-mock-and-live-agree">Contract-first, so mock and live agree</a></li>
+<li><a href="#integration-checklist-phase-4">Integration checklist (Phase 4)</a></li>
+</ul>
+</div>
+</div></aside>
+  </main>
+</div>
+<footer class="site-foot">
+  <div>
+    <strong>Developer Portal</strong> — internal &amp; external · cinematic-dark · Bloc/Cubit + clean architecture
+  </div>
+  <div class="foot-meta">Generated from <code>docs/content/*.md</code> by <code>build.py</code>. An independent engineering reference; “Apigee” and “Google Cloud” are marks of Google.</div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

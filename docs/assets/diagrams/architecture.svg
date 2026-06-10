@@ -1,0 +1,172 @@
+<svg viewBox="0 0 1000 824" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="System architecture of the internal and external developer portals">
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+      <path d="M0,0 L7,3.2 L0,6.4 Z" fill="#8E8E99"/>
+    </marker>
+    <marker id="arrRed" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+      <path d="M0,0 L7,3.2 L0,6.4 Z" fill="#E50914"/>
+    </marker>
+    <style>
+      .tlabel { fill:#6E6E7A; font-size:11px; font-weight:700; letter-spacing:1.5px; }
+      .title  { fill:#FFFFFF; font-size:15px; font-weight:700; }
+      .sub    { fill:#9A9AA4; font-size:11.5px; }
+      .tiny   { fill:#B9B9C2; font-size:11px; }
+      .chip   { fill:#1F1F27; stroke:#3A3A45; }
+      .chipT  { fill:#D9D9DE; font-size:11px; font-weight:600; }
+      .flow   { fill:#8E8E99; font-size:10.5px; font-style:italic; }
+      .flowR  { fill:#ff7a80; font-size:10.5px; font-weight:600; }
+      .tag    { font-size:10px; font-weight:700; letter-spacing:.5px; }
+    </style>
+  </defs>
+
+  <!-- ===== Tier labels (left rail) ===== -->
+  <text class="tlabel" x="22" y="74">USERS</text>
+  <text class="tlabel" x="22" y="226">PRESENTATION</text>
+  <text class="tlabel" x="22" y="244" fill="#5A5A66" font-size="10" letter-spacing="0.5">Flutter Web</text>
+  <text class="tlabel" x="22" y="430">BFF</text>
+  <text class="tlabel" x="22" y="448" fill="#5A5A66" font-size="10" letter-spacing="0.5">Headless Drupal</text>
+  <text class="tlabel" x="22" y="600">PLATFORM</text>
+  <text class="tlabel" x="22" y="618" fill="#5A5A66" font-size="10" letter-spacing="0.5">Apigee X</text>
+  <text class="tlabel" x="22" y="754">CLOUD</text>
+
+  <!-- ===== USERS ===== -->
+  <g>
+    <rect x="190" y="40" width="270" height="60" rx="12" fill="#16161C" stroke="#2A2A33"/>
+    <circle cx="222" cy="70" r="13" fill="#2A1115" stroke="#E50914"/>
+    <text x="222" y="74" text-anchor="middle" font-size="13" fill="#ff7a80">↗</text>
+    <text class="title" x="246" y="65">External developers</text>
+    <text class="sub" x="246" y="82">Partners · third parties · fintechs</text>
+
+    <rect x="540" y="40" width="270" height="60" rx="12" fill="#16161C" stroke="#2A2A33"/>
+    <circle cx="572" cy="70" r="13" fill="#1A1430" stroke="#7B2FF7"/>
+    <text x="572" y="74" text-anchor="middle" font-size="13" fill="#b98bff">★</text>
+    <text class="title" x="596" y="65">Internal API team</text>
+    <text class="sub" x="596" y="82">Product · platform · support</text>
+  </g>
+
+  <!-- arrows users -> apps -->
+  <line x1="325" y1="100" x2="325" y2="150" stroke="#8E8E99" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="675" y1="100" x2="675" y2="150" stroke="#8E8E99" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text class="flow" x="333" y="128">HTTPS</text>
+  <text class="flow" x="683" y="128">HTTPS · SSO</text>
+
+  <!-- ===== PRESENTATION tier container ===== -->
+  <rect x="160" y="150" width="680" height="208" rx="16" fill="#0F0F15" stroke="#2A2A33"/>
+  <rect x="172" y="138" width="78" height="20" rx="10" fill="#16321d" stroke="#2DD467"/>
+  <text class="tag" x="211" y="151.5" text-anchor="middle" fill="#74e6a0">BUILT · MOCK</text>
+
+  <!-- external app card -->
+  <rect x="182" y="172" width="300" height="104" rx="12" fill="#16161C" stroke="#E50914" stroke-opacity="0.55"/>
+  <text class="title" x="200" y="196">devportal-external</text>
+  <text class="sub" x="200" y="213">Catalog · Try-it · Apps &amp; keys · Flows · Usage</text>
+  <rect x="200" y="226" width="78" height="20" rx="6" class="chip"/><text class="chipT" x="239" y="240" text-anchor="middle">go_router</text>
+  <rect x="284" y="226" width="86" height="20" rx="6" class="chip"/><text class="chipT" x="327" y="240" text-anchor="middle">Bloc / Cubit</text>
+  <rect x="376" y="226" width="88" height="20" rx="6" class="chip"/><text class="chipT" x="420" y="240" text-anchor="middle">clean arch</text>
+  <text class="sub" x="200" y="266" fill="#6E6E7A" font-size="10.5">Public catalog &amp; self-service for third-party devs</text>
+
+  <!-- internal app card -->
+  <rect x="518" y="172" width="300" height="104" rx="12" fill="#16161C" stroke="#7B2FF7" stroke-opacity="0.55"/>
+  <text class="title" x="536" y="196">devportal-internal</text>
+  <text class="sub" x="536" y="213">Dashboard · Products · Developers · Approvals</text>
+  <rect x="536" y="226" width="92" height="20" rx="6" class="chip"/><text class="chipT" x="582" y="240" text-anchor="middle">admin shell</text>
+  <rect x="634" y="226" width="86" height="20" rx="6" class="chip"/><text class="chipT" x="677" y="240" text-anchor="middle">Bloc / Cubit</text>
+  <rect x="726" y="226" width="76" height="20" rx="6" class="chip"/><text class="chipT" x="764" y="240" text-anchor="middle">analytics</text>
+  <text class="sub" x="536" y="266" fill="#6E6E7A" font-size="10.5">Admin console for the API team (login-gated)</text>
+
+  <!-- shared package band -->
+  <rect x="182" y="290" width="636" height="56" rx="12" fill="#101a1b" stroke="#0FB5BA" stroke-opacity="0.6"/>
+  <text class="title" x="200" y="312" fill="#7fe3e6">devportal_shared</text>
+  <text class="sub" x="200" y="330">Cinematic design system · domain entities · repository interfaces</text>
+  <rect x="566" y="302" width="234" height="32" rx="8" fill="#0c1314" stroke="#0FB5BA" stroke-opacity="0.4"/>
+  <text class="tiny" x="683" y="316" text-anchor="middle" fill="#9fdfe1" font-weight="600">Data layer — the swap seam</text>
+  <text class="tiny" x="683" y="329" text-anchor="middle" fill="#6E6E7A" font-size="10">Mock repos  ▸  Live repos (Phase 4)</text>
+
+  <!-- both apps depend on shared (small connectors) -->
+  <line x1="332" y1="276" x2="332" y2="290" stroke="#0FB5BA" stroke-width="1.2" stroke-opacity="0.7"/>
+  <line x1="668" y1="276" x2="668" y2="290" stroke="#0FB5BA" stroke-width="1.2" stroke-opacity="0.7"/>
+
+  <!-- ===== IDENTITY (right column) ===== -->
+  <rect x="858" y="150" width="128" height="296" rx="14" fill="#16161C" stroke="#F5A524" stroke-opacity="0.5" stroke-dasharray="5 4"/>
+  <text class="title" x="922" y="186" text-anchor="middle" fill="#ffd27a" font-size="13.5">ForgeRock</text>
+  <text class="sub" x="922" y="203" text-anchor="middle">OIDC IdP</text>
+  <line x1="872" y1="216" x2="972" y2="216" stroke="#2A2A33"/>
+  <text class="tiny" x="922" y="238" text-anchor="middle">Auth Code</text>
+  <text class="tiny" x="922" y="253" text-anchor="middle">+ PKCE</text>
+  <text class="tiny" x="922" y="278" text-anchor="middle" fill="#6E6E7A" font-size="10">browser ↔ IdP</text>
+  <line x1="872" y1="298" x2="972" y2="298" stroke="#2A2A33"/>
+  <text class="tiny" x="922" y="322" text-anchor="middle">openid_connect</text>
+  <text class="tiny" x="922" y="337" text-anchor="middle">federation</text>
+  <text class="tiny" x="922" y="360" text-anchor="middle" fill="#6E6E7A" font-size="10">Drupal ↔ IdP</text>
+  <line x1="872" y1="380" x2="972" y2="380" stroke="#2A2A33"/>
+  <text class="tiny" x="922" y="404" text-anchor="middle" fill="#9A9AA4" font-size="10">Mock today:</text>
+  <text class="tiny" x="922" y="419" text-anchor="middle" fill="#9A9AA4" font-size="10">stubbed SSO /</text>
+  <text class="tiny" x="922" y="433" text-anchor="middle" fill="#9A9AA4" font-size="10">hardcoded login</text>
+
+  <!-- presentation tier -> ForgeRock -->
+  <path d="M840 200 H856" fill="none" stroke="#F5A524" stroke-width="1.3" stroke-opacity="0.85" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+  <text x="922" y="143" text-anchor="middle" class="flow" fill="#caa24f">OIDC sign-in · Phase 4</text>
+
+  <!-- ===== presentation -> BFF ===== -->
+  <line x1="472" y1="358" x2="472" y2="410" stroke="#E50914" stroke-width="1.6" marker-end="url(#arrRed)"/>
+  <text class="flowR" x="482" y="382">JSON:API / custom REST</text>
+  <text class="flow" x="482" y="396">HTTPS · Bearer token</text>
+
+  <!-- ===== BFF tier ===== -->
+  <rect x="160" y="410" width="680" height="120" rx="16" fill="#0F0F15" stroke="#4DA3FF" stroke-opacity="0.5" stroke-dasharray="6 5"/>
+  <rect x="172" y="398" width="92" height="20" rx="10" fill="#102033" stroke="#4DA3FF"/>
+  <text class="tag" x="218" y="411.5" text-anchor="middle" fill="#9ecbff">PHASE 3</text>
+  <text class="title" x="184" y="438" fill="#bcd9ff">Drupal — headless BFF</text>
+  <text class="sub" x="184" y="455">Apigee Developer Portal Kit, API-only (no themed Drupal pages)</text>
+  <rect x="184" y="466" width="108" height="24" rx="6" class="chip"/><text class="chipT" x="238" y="482" text-anchor="middle">apigee_edge</text>
+  <rect x="298" y="466" width="140" height="24" rx="6" class="chip"/><text class="chipT" x="368" y="482" text-anchor="middle">apigee_api_catalog</text>
+  <rect x="444" y="466" width="128" height="24" rx="6" class="chip"/><text class="chipT" x="508" y="482" text-anchor="middle">apigee_kickstart</text>
+  <rect x="578" y="466" width="120" height="24" rx="6" class="chip"/><text class="chipT" x="638" y="482" text-anchor="middle">openid_connect</text>
+  <rect x="704" y="466" width="120" height="24" rx="6" class="chip" stroke="#4DA3FF" stroke-opacity="0.5"/><text class="chipT" x="764" y="482" text-anchor="middle" fill="#9ecbff">custom REST</text>
+  <text class="sub" x="184" y="508" fill="#6E6E7A" font-size="10.5">Federates identity · proxies catalog, apps &amp; keys · custom endpoint reshapes analytics</text>
+
+  <!-- Drupal -> ForgeRock federation -->
+  <path d="M840 428 H856" fill="none" stroke="#F5A524" stroke-width="1.2" stroke-opacity="0.75" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+
+  <!-- ===== BFF -> Apigee ===== -->
+  <line x1="472" y1="530" x2="472" y2="582" stroke="#E50914" stroke-width="1.6" marker-end="url(#arrRed)"/>
+  <text class="flowR" x="482" y="554">Management + Analytics (Stats) API</text>
+  <text class="flow" x="482" y="568">GCP service account · OAuth2</text>
+
+  <!-- ===== Apigee tier ===== -->
+  <rect x="160" y="582" width="680" height="118" rx="16" fill="#0F0F15" stroke="#F5A524" stroke-opacity="0.5" stroke-dasharray="6 5"/>
+  <rect x="172" y="570" width="92" height="20" rx="10" fill="#33270d" stroke="#F5A524"/>
+  <text class="tag" x="218" y="583.5" text-anchor="middle" fill="#ffd27a">PHASE 4</text>
+  <text class="title" x="184" y="610" fill="#ffe2ad">Apigee X</text>
+  <text class="sub" x="184" y="627">The API gateway &amp; control plane (the source of truth for live data)</text>
+  <rect x="184" y="640" width="196" height="44" rx="10" fill="#16161C" stroke="#3A3A45"/>
+  <text class="chipT" x="282" y="658" text-anchor="middle" fill="#fff" font-size="12">Management API</text>
+  <text class="tiny" x="282" y="674" text-anchor="middle" fill="#9A9AA4" font-size="10">products · apps · keys · devs</text>
+  <rect x="392" y="640" width="196" height="44" rx="10" fill="#16161C" stroke="#3A3A45"/>
+  <text class="chipT" x="490" y="658" text-anchor="middle" fill="#fff" font-size="12">Analytics / Stats API</text>
+  <text class="tiny" x="490" y="674" text-anchor="middle" fill="#9A9AA4" font-size="10">traffic · latency · errors</text>
+  <rect x="600" y="640" width="216" height="44" rx="10" fill="#16161C" stroke="#3A3A45"/>
+  <text class="chipT" x="708" y="658" text-anchor="middle" fill="#fff" font-size="12">Runtime — API proxies</text>
+  <text class="tiny" x="708" y="674" text-anchor="middle" fill="#9A9AA4" font-size="10">BIAN payment APIs · OAuth</text>
+
+  <!-- ===== Apigee -> Cloud ===== -->
+  <line x1="472" y1="700" x2="472" y2="724" stroke="#8E8E99" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text class="flow" x="482" y="717">runs on</text>
+
+  <!-- ===== Cloud foundation ===== -->
+  <rect x="160" y="724" width="680" height="74" rx="16" fill="#0F0F15" stroke="#2A2A33"/>
+  <text class="title" x="184" y="750" fill="#cfd0d6">Google Cloud</text>
+  <rect x="320" y="734" width="150" height="26" rx="7" class="chip"/><text class="chipT" x="395" y="751" text-anchor="middle">Cloud Run + Cloud SQL</text>
+  <rect x="482" y="734" width="150" height="26" rx="7" class="chip"/><text class="chipT" x="557" y="751" text-anchor="middle">Firebase Hosting / CDN</text>
+  <rect x="644" y="734" width="170" height="26" rx="7" class="chip"/><text class="chipT" x="729" y="751" text-anchor="middle">IAP · Service Accounts</text>
+  <text class="sub" x="184" y="784" font-size="10.5" fill="#6E6E7A">Drupal on Cloud Run · Flutter on Firebase Hosting · internal app behind Identity-Aware Proxy</text>
+
+  <!-- ===== Legend ===== -->
+  <g transform="translate(184,806)">
+    <line x1="0" y1="-3" x2="22" y2="-3" stroke="#2DD467" stroke-width="2"/>
+    <text class="tiny" x="28" y="0" fill="#9A9AA4">Built today (mock)</text>
+    <line x1="170" y1="-3" x2="192" y2="-3" stroke="#9ecbff" stroke-width="2" stroke-dasharray="6 5"/>
+    <text class="tiny" x="198" y="0" fill="#9A9AA4">Planned (Phase 3–5)</text>
+    <line x1="350" y1="-3" x2="372" y2="-3" stroke="#E50914" stroke-width="2"/>
+    <text class="tiny" x="378" y="0" fill="#9A9AA4">Live data path</text>
+  </g>
+</svg>

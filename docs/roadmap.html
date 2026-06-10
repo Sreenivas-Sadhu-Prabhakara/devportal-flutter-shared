@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-page="roadmap">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Where the build is today and the phased path from clickable mock to a live, governed platform.">
+<meta name="theme-color" content="#0B0B0F">
+<title>Roadmap & What Ships Next · Developer Portal Docs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#doc">Skip to content</a>
+<header class="topbar">
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="index.html">
+<svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+  <g stroke="#FF3640" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="32" x2="32" y2="14"/><line x1="32" y1="32" x2="48" y2="23"/>
+    <line x1="32" y1="32" x2="48" y2="41"/><line x1="32" y1="32" x2="32" y2="50"/>
+    <line x1="32" y1="32" x2="16" y2="41"/><line x1="32" y1="32" x2="16" y2="23"/>
+  </g>
+  <g fill="#fff" stroke="#E50914" stroke-width="1.7">
+    <circle cx="32" cy="14" r="4.3"/><circle cx="48" cy="23" r="4.3"/>
+    <circle cx="48" cy="41" r="4.3"/><circle cx="32" cy="50" r="4.3"/>
+    <circle cx="16" cy="41" r="4.3"/><circle cx="16" cy="23" r="4.3"/>
+  </g>
+  <circle cx="32" cy="32" r="10" fill="#E50914" stroke="#08080B"/>
+  <circle cx="32" cy="32" r="3.4" fill="#fff"/>
+</svg><span class="brand-name">Developer&nbsp;Portal</span><span class="brand-badge">Docs</span></a>
+  <nav class="top-links" aria-label="Related">
+    <a href="architecture.html">Architecture</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="how-to.html">How-to</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Documentation">
+<div class="nav-group"><span class="nav-group-label">Understand</span><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="architecture.html">Architecture</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Plan</span><ul>
+<li><a href="roadmap.html" class="active" aria-current="page">Roadmap & what's next</a></li>
+<li><a href="integration.html">Integration path</a></li>
+<li><a href="deployment.html">Deployment</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Use</span><ul>
+<li><a href="how-to.html">How-to guide</a></li>
+</ul></div>
+</nav></aside>
+  <div class="sidebar-scrim" hidden></div>
+  <main class="main">
+    <article class="doc" id="doc">
+      <div class="crumb"><a href="index.html">Docs</a> <span>/</span> Roadmap & what's next</div>
+      <header class="doc-head">
+        <h1>Roadmap & What Ships Next</h1>
+        <p class="lede">Where the build is today and the phased path from clickable mock to a live, governed platform.</p>
+      </header>
+      <p><strong>Bottom line:</strong> the two portals are built and clickable on mock data (Phases 1–2,
+done). The remaining work is a straight line — stand up the Drupal BFF (Phase 3),
+swap mock data for live Apigee X data and real identity (Phase 4), deploy and
+operate on Google Cloud (Phase 5), then layer on monetization and governance
+(Phase 6).</p>
+<h2 id="the-phase-model">The phase model<a class="headerlink" href="#the-phase-model" title="Permanent link">#</a></h2>
+<div class="cards">
+  <div class="card"><span class="tag now">Done</span><h3>Phase 1 — External mock</h3><p>Public portal: catalog, Try-it, apps &amp; keys, flows, usage. Clickable on fixtures.</p></div>
+  <div class="card"><span class="tag now">Done</span><h3>Phase 2 — Internal mock</h3><p>Admin console: dashboard, products CRUD, developers, approvals, analytics, settings.</p></div>
+  <div class="card"><span class="tag next">Next</span><h3>Phase 3 — Drupal BFF</h3><p>Headless Apigee Developer Portal Kit + custom REST + identity federation.</p></div>
+  <div class="card"><span class="tag next">Next</span><h3>Phase 4 — Go live</h3><p>Live repositories + ForgeRock OIDC. Real products, keys, analytics, Try-it.</p></div>
+  <div class="card"><span class="tag later">Later</span><h3>Phase 5 — Deploy &amp; operate</h3><p>GCP hosting, CI/CD promotion, observability.</p></div>
+  <div class="card"><span class="tag later">Later</span><h3>Phase 6 — Monetize &amp; govern</h3><p>Rate plans/billing, approval policy, API hub.</p></div>
+</div>
+
+<h2 id="whats-done">What's done<a class="headerlink" href="#whats-done" title="Permanent link">#</a></h2>
+<p>Both Flutter apps and the shared package are built, analyze clean, build for web,
+and pass their widget + e2e tests. All three repos are committed on <code>main</code>.</p>
+<ul>
+<li><strong><code>devportal-external</code></strong> — home (hero + carousels), catalog (search/filter),
+  product detail (overview · docs · <strong>Try-it</strong>), sign-in (stubbed SSO), my apps,
+  register app (auto-approve public, queue restricted), app detail (reveal/copy
+  keys, usage), <strong>flows</strong> (internal + external payment journeys).</li>
+<li><strong><code>devportal-internal</code></strong> — operations dashboard, products (create/edit),
+  developers, approvals queue (approve/reject), analytics, settings.</li>
+<li><strong><code>devportal_shared</code></strong> — design tokens + cinematic widgets, domain entities,
+  repository interfaces, JSON fixtures, and mock repositories behind them.</li>
+</ul>
+<h2 id="what-ships-next-phase-3-the-drupal-bff">What ships next (Phase 3 — the Drupal BFF)<a class="headerlink" href="#what-ships-next-phase-3-the-drupal-bff" title="Permanent link">#</a></h2>
+<p>The immediate work, in order:</p>
+<ol>
+<li><strong>Formalize the data contract.</strong> Promote the ad-hoc fixture shapes into an
+   explicit <strong>OpenAPI</strong> description of the Flutter ↔ Drupal API. This is the
+   contract both the mock and the live client honour.</li>
+<li>
+<p><strong>Scaffold <code>devportal-drupal</code>.</strong> Install via <strong><code>apigee_kickstart</code></strong>; run Drupal
+   headless (JSON:API on, no themed pages).</p>
+<div class="admonition warning">
+<p class="admonition-title">Local prerequisite not yet installed</p>
+<p>Phase 3 needs PHP, Composer, and DDEV (or equivalent) on the build machine
+— none are installed locally yet. That's the first blocker to clear.</p>
+</div>
+</li>
+<li>
+<p><strong>Connect to Apigee X.</strong> Configure <strong><code>apigee_edge</code></strong> against the real org
+   (<em>needs org details + a GCP service-account JSON — see open inputs</em>).</p>
+</li>
+<li><strong>Expose the catalog &amp; apps.</strong> Surface API products, apps, keys, and developers
+   over JSON:API.</li>
+<li><strong>Build the analytics endpoint.</strong> A <strong>custom Drupal REST</strong> resource that calls
+   the Apigee <strong>stats API</strong> and reshapes it into the dashboard's compact series.</li>
+<li><strong>Wire identity.</strong> Stand up <strong><code>openid_connect</code></strong> to federate ForgeRock → Drupal
+   user → Apigee developer (<em>needs ForgeRock OIDC details</em>).</li>
+</ol>
+<h2 id="then-go-live-phase-4">Then go live (Phase 4)<a class="headerlink" href="#then-go-live-phase-4" title="Permanent link">#</a></h2>
+<ol>
+<li>Implement <strong>Live repositories</strong> in <code>devportal_shared/data/live/</code> (a Dio/HTTP
+   client) behind the existing interfaces. See the <a href="integration.html">Integration path</a>.</li>
+<li>Flip the data source: <code>--dart-define=DATA_SOURCE=live</code>.</li>
+<li>Replace the stub auth with the real <strong>OIDC Authorization Code + PKCE</strong> flow in
+   <code>AuthCubit</code>; retire the hardcoded login.</li>
+<li>Real <strong>app registration → real consumer keys</strong>; <strong>Try-it</strong> calls hit the
+   deployed <strong>BIAN payment</strong> proxies; dashboards read real analytics.</li>
+</ol>
+<h2 id="cross-cutting-modelled-now-built-later">Cross-cutting, modelled now — built later<a class="headerlink" href="#cross-cutting-modelled-now-built-later" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Monetization (Phase 6).</strong> The domain is already shaped to allow rate plans and
+  billing; nothing is built in v1. Settings shows it illustratively.</li>
+<li><strong>Approvals / governance (Phase 6).</strong> The approval queue is real in the mock;
+  the <em>policy</em> (likely "mixed by product") is deferred. Today: public products
+  auto-approve, restricted products queue.</li>
+</ul>
+<h2 id="open-inputs-before-the-live-phases">Open inputs before the live phases<a class="headerlink" href="#open-inputs-before-the-live-phases" title="Permanent link">#</a></h2>
+<p>These are required before Phase 3/4 can be wired (the mock phases do not need them):</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Needed for</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apigee X <strong>org + env</strong> names</td>
+<td><code>apigee_edge</code> connection</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>GCP <strong>service-account JSON</strong> (apigee viewer/admin)</td>
+<td>Drupal → Apigee X auth</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td><strong>ForgeRock OIDC</strong> issuer, client IDs/secrets, redirect URIs, claim mapping</td>
+<td>Identity federation</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td><strong>Repo location</strong> decision (polyrepo confirmed; remote TBD)</td>
+<td>Push / CI</td>
+<td>Pending</td>
+</tr>
+<tr>
+<td>Real <strong>brand assets</strong> (logo/palette/type)</td>
+<td>Replace cinematic placeholder tokens</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><strong>Hosting target</strong> confirmation (GCP-native)</td>
+<td>Phase 5 deploy</td>
+<td>Recommended, unconfirmed</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">None of this blocks UI work</p>
+<p>Because the apps run on the mock, feature work, polish, and new screens can
+proceed in parallel with standing up the backend — they meet at the repository
+interface.</p>
+</div>
+      <nav class="pager"><a class="pager-prev" href="architecture.html"><span>Previous</span><strong>Architecture</strong></a><a class="pager-next" href="integration.html"><span>Next</span><strong>Integration path</strong></a></nav>
+    </article>
+    <aside class="onthispage" aria-label="On this page"><div class="otp-inner"><p class="otp-title">On this page</p><div class="toc">
+<ul>
+<li><a href="#the-phase-model">The phase model</a></li>
+<li><a href="#whats-done">What's done</a></li>
+<li><a href="#what-ships-next-phase-3-the-drupal-bff">What ships next (Phase 3 — the Drupal BFF)</a></li>
+<li><a href="#then-go-live-phase-4">Then go live (Phase 4)</a></li>
+<li><a href="#cross-cutting-modelled-now-built-later">Cross-cutting, modelled now — built later</a></li>
+<li><a href="#open-inputs-before-the-live-phases">Open inputs before the live phases</a></li>
+</ul>
+</div>
+</div></aside>
+  </main>
+</div>
+<footer class="site-foot">
+  <div>
+    <strong>Developer Portal</strong> — internal &amp; external · cinematic-dark · Bloc/Cubit + clean architecture
+  </div>
+  <div class="foot-meta">Generated from <code>docs/content/*.md</code> by <code>build.py</code>. An independent engineering reference; “Apigee” and “Google Cloud” are marks of Google.</div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

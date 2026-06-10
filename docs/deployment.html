@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-page="deployment">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="How each tier is built, shipped, and operated on Google Cloud — now and as the platform matures.">
+<meta name="theme-color" content="#0B0B0F">
+<title>Deployment · Developer Portal Docs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#doc">Skip to content</a>
+<header class="topbar">
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="index.html">
+<svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+  <g stroke="#FF3640" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="32" x2="32" y2="14"/><line x1="32" y1="32" x2="48" y2="23"/>
+    <line x1="32" y1="32" x2="48" y2="41"/><line x1="32" y1="32" x2="32" y2="50"/>
+    <line x1="32" y1="32" x2="16" y2="41"/><line x1="32" y1="32" x2="16" y2="23"/>
+  </g>
+  <g fill="#fff" stroke="#E50914" stroke-width="1.7">
+    <circle cx="32" cy="14" r="4.3"/><circle cx="48" cy="23" r="4.3"/>
+    <circle cx="48" cy="41" r="4.3"/><circle cx="32" cy="50" r="4.3"/>
+    <circle cx="16" cy="41" r="4.3"/><circle cx="16" cy="23" r="4.3"/>
+  </g>
+  <circle cx="32" cy="32" r="10" fill="#E50914" stroke="#08080B"/>
+  <circle cx="32" cy="32" r="3.4" fill="#fff"/>
+</svg><span class="brand-name">Developer&nbsp;Portal</span><span class="brand-badge">Docs</span></a>
+  <nav class="top-links" aria-label="Related">
+    <a href="architecture.html">Architecture</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="how-to.html">How-to</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Documentation">
+<div class="nav-group"><span class="nav-group-label">Understand</span><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="architecture.html">Architecture</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Plan</span><ul>
+<li><a href="roadmap.html">Roadmap & what's next</a></li>
+<li><a href="integration.html">Integration path</a></li>
+<li><a href="deployment.html" class="active" aria-current="page">Deployment</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Use</span><ul>
+<li><a href="how-to.html">How-to guide</a></li>
+</ul></div>
+</nav></aside>
+  <div class="sidebar-scrim" hidden></div>
+  <main class="main">
+    <article class="doc" id="doc">
+      <div class="crumb"><a href="index.html">Docs</a> <span>/</span> Deployment</div>
+      <header class="doc-head">
+        <h1>Deployment</h1>
+        <p class="lede">How each tier is built, shipped, and operated on Google Cloud — now and as the platform matures.</p>
+      </header>
+      <p><strong>Bottom line:</strong> the platform is <strong>GCP-native</strong>. Flutter Web ships to <strong>Firebase
+Hosting</strong> (the internal app additionally behind <strong>Identity-Aware Proxy</strong>); the
+Drupal BFF runs as a container on <strong>Cloud Run</strong> with <strong>Cloud SQL</strong> and <strong>Secret
+Manager</strong>; everything talks to the <strong>Apigee X</strong> org and federates identity with
+<strong>ForgeRock</strong>. Delivery starts as simple manual deploys and matures into
+gated, promotable CI/CD.</p>
+<h2 id="topology">Topology<a class="headerlink" href="#topology" title="Permanent link">#</a></h2>
+<figure class="diagram">
+  <img src="assets/diagrams/deployment.svg" alt="Deployment topology: a delivery pipeline from GitHub through Cloud Build to Artifact Registry, deploying into a Google Cloud project containing Firebase Hosting, an IAP-gated internal portal, Cloud Run Drupal, Cloud SQL, Secret Manager, with Apigee X and ForgeRock as attached services and an observability layer.">
+  <figcaption><strong>Figure 3.</strong> Delivery (left) feeds the Google Cloud runtime (right). Each tier scales and deploys independently.</figcaption>
+</figure>
+
+<h2 id="what-runs-where">What runs where<a class="headerlink" href="#what-runs-where" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Service</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>External portal</td>
+<td><strong>Firebase Hosting</strong> + CDN</td>
+<td>Static Flutter bundle, global edge cache, free TLS</td>
+</tr>
+<tr>
+<td>Internal portal</td>
+<td>Hosting <strong>+ Identity-Aware Proxy</strong></td>
+<td>Same bundle, staff-only — IAP enforces corporate identity at the edge</td>
+</tr>
+<tr>
+<td>Drupal BFF</td>
+<td><strong>Cloud Run</strong> (container)</td>
+<td>Stateless, autoscales to zero, pay-per-use, easy rollback</td>
+</tr>
+<tr>
+<td>Database</td>
+<td><strong>Cloud SQL</strong> (private IP)</td>
+<td>Managed Postgres/MySQL for Drupal</td>
+</tr>
+<tr>
+<td>Secrets</td>
+<td><strong>Secret Manager</strong></td>
+<td>SA key + OIDC client secret, never in images or env files</td>
+</tr>
+<tr>
+<td>Gateway</td>
+<td><strong>Apigee X</strong></td>
+<td>The API program itself (proxies, products, analytics)</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td><strong>ForgeRock</strong> (OIDC)</td>
+<td>Federated, external to the portal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-each-tier-is-built-shipped">How each tier is built &amp; shipped<a class="headerlink" href="#how-each-tier-is-built-shipped" title="Permanent link">#</a></h2>
+<p><strong>Flutter Web (both portals)</strong></p>
+<pre><code class="language-bash">flutter build web --release \
+  --dart-define=DATA_SOURCE=live \
+  --dart-define=API_BASE=https://portal-api.example.com
+firebase deploy --only hosting:external   # or hosting:internal
+</code></pre>
+<p><strong>Drupal BFF (container)</strong></p>
+<pre><code class="language-bash">gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT/portal/drupal:TAG
+gcloud run deploy drupal-bff \
+  --image REGION-docker.pkg.dev/PROJECT/portal/drupal:TAG \
+  --add-cloudsql-instances PROJECT:REGION:portal-db \
+  --set-secrets APIGEE_SA_KEY=apigee-sa:latest,OIDC_SECRET=oidc-client:latest \
+  --no-allow-unauthenticated
+</code></pre>
+<h2 id="environments">Environments<a class="headerlink" href="#environments" title="Permanent link">#</a></h2>
+<p>Mirror the Apigee <strong>environment groups</strong> end to end — <strong><code>eval</code> → <code>test</code> → <code>prod</code></strong> —
+so a change is proven before it reaches production. Each environment is its own
+Cloud Run service, Hosting target, Cloud SQL instance, and Apigee env, parameterized
+by <code>--dart-define</code> (front end) and Cloud Run config (back end). No code differs
+between environments — only configuration.</p>
+<h2 id="delivery-maturity-path">Delivery maturity path<a class="headerlink" href="#delivery-maturity-path" title="Permanent link">#</a></h2>
+<p>The pipeline grows with the program; you don't need the end state on day one.</p>
+<div class="cards">
+  <div class="card"><span class="tag now">Start</span><h3>Manual</h3><p><code>firebase deploy</code> and <code>gcloud run deploy</code> by hand into <code>eval</code>. Fastest path to a live demo.</p></div>
+  <div class="card"><span class="tag next">Then</span><h3>Triggered</h3><p><strong>Cloud Build</strong> triggers per branch/PR: build, test, and deploy to <code>eval</code> automatically.</p></div>
+  <div class="card"><span class="tag next">Then</span><h3>Promoted</h3><p>Promote the <em>same artifact</em> <code>eval → test → prod</code> behind manual approvals.</p></div>
+  <div class="card"><span class="tag later">Mature</span><h3>Safe</h3><p>Blue/green or canary on Cloud Run with traffic splitting and <strong>automated rollback</strong> on health/SLO breach.</p></div>
+</div>
+
+<div class="admonition tip">
+<p class="admonition-title">Promote artifacts, don't rebuild</p>
+<p>Build the web bundle and the Drupal image <strong>once</strong>, tag them, and promote the
+exact same artifact through environments. Rebuilding per environment reintroduces
+the risk you were testing away.</p>
+</div>
+<h2 id="security-posture">Security posture<a class="headerlink" href="#security-posture" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Internal portal behind IAP</strong> — no public route to the admin console; IAP checks
+  corporate identity before the app loads. A VPC/VPN fronting is the stricter
+  alternative.</li>
+<li><strong>Service account is least-privilege</strong> — Apigee viewer/admin scopes only, key in
+  <strong>Secret Manager</strong>, mounted to Cloud Run, never in the Flutter bundle (the browser
+  must never hold it — that's the whole point of the BFF).</li>
+<li><strong>Cloud Run is private</strong> — <code>--no-allow-unauthenticated</code>; only Hosting/IAP and
+  authorized callers reach it. Cloud SQL on <strong>private IP</strong>.</li>
+<li><strong>OIDC secrets</strong> in Secret Manager; redirect URIs locked to the deployed hostnames.</li>
+</ul>
+<h2 id="observability">Observability<a class="headerlink" href="#observability" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Cloud Logging / Monitoring / Error Reporting</strong> for the BFF and hosting.</li>
+<li><strong>Apigee Analytics</strong> + custom reports for API traffic, latency, and errors —
+  the same stats API the internal dashboards consume.</li>
+<li>Dashboards and alerts per environment; promotion gates can read SLOs.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Today vs. target</p>
+<p>None of this is provisioned yet — the apps run from <code>flutter run</code> locally on
+mock data. This page is the <strong>target</strong> operational model for Phase 5; it can be
+stood up incrementally, starting with a single manual deploy to <code>eval</code>.</p>
+</div>
+      <nav class="pager"><a class="pager-prev" href="integration.html"><span>Previous</span><strong>Integration path</strong></a><a class="pager-next" href="how-to.html"><span>Next</span><strong>How-to guide</strong></a></nav>
+    </article>
+    <aside class="onthispage" aria-label="On this page"><div class="otp-inner"><p class="otp-title">On this page</p><div class="toc">
+<ul>
+<li><a href="#topology">Topology</a></li>
+<li><a href="#what-runs-where">What runs where</a></li>
+<li><a href="#how-each-tier-is-built-shipped">How each tier is built &amp; shipped</a></li>
+<li><a href="#environments">Environments</a></li>
+<li><a href="#delivery-maturity-path">Delivery maturity path</a></li>
+<li><a href="#security-posture">Security posture</a></li>
+<li><a href="#observability">Observability</a></li>
+</ul>
+</div>
+</div></aside>
+  </main>
+</div>
+<footer class="site-foot">
+  <div>
+    <strong>Developer Portal</strong> — internal &amp; external · cinematic-dark · Bloc/Cubit + clean architecture
+  </div>
+  <div class="foot-meta">Generated from <code>docs/content/*.md</code> by <code>build.py</code>. An independent engineering reference; “Apigee” and “Google Cloud” are marks of Google.</div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" data-page="how-to">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Step-by-step walkthroughs for external developers and the internal API team, on today's clickable mock.">
+<meta name="theme-color" content="#0B0B0F">
+<title>How-To Guide · Developer Portal Docs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#doc">Skip to content</a>
+<header class="topbar">
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="index.html">
+<svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+  <g stroke="#FF3640" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="32" x2="32" y2="14"/><line x1="32" y1="32" x2="48" y2="23"/>
+    <line x1="32" y1="32" x2="48" y2="41"/><line x1="32" y1="32" x2="32" y2="50"/>
+    <line x1="32" y1="32" x2="16" y2="41"/><line x1="32" y1="32" x2="16" y2="23"/>
+  </g>
+  <g fill="#fff" stroke="#E50914" stroke-width="1.7">
+    <circle cx="32" cy="14" r="4.3"/><circle cx="48" cy="23" r="4.3"/>
+    <circle cx="48" cy="41" r="4.3"/><circle cx="32" cy="50" r="4.3"/>
+    <circle cx="16" cy="41" r="4.3"/><circle cx="16" cy="23" r="4.3"/>
+  </g>
+  <circle cx="32" cy="32" r="10" fill="#E50914" stroke="#08080B"/>
+  <circle cx="32" cy="32" r="3.4" fill="#fff"/>
+</svg><span class="brand-name">Developer&nbsp;Portal</span><span class="brand-badge">Docs</span></a>
+  <nav class="top-links" aria-label="Related">
+    <a href="architecture.html">Architecture</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="how-to.html">How-to</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Documentation">
+<div class="nav-group"><span class="nav-group-label">Understand</span><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="architecture.html">Architecture</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Plan</span><ul>
+<li><a href="roadmap.html">Roadmap & what's next</a></li>
+<li><a href="integration.html">Integration path</a></li>
+<li><a href="deployment.html">Deployment</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Use</span><ul>
+<li><a href="how-to.html" class="active" aria-current="page">How-to guide</a></li>
+</ul></div>
+</nav></aside>
+  <div class="sidebar-scrim" hidden></div>
+  <main class="main">
+    <article class="doc" id="doc">
+      <div class="crumb"><a href="index.html">Docs</a> <span>/</span> How-to guide</div>
+      <header class="doc-head">
+        <h1>How-To Guide</h1>
+        <p class="lede">Step-by-step walkthroughs for external developers and the internal API team, on today's clickable mock.</p>
+      </header>
+      <p>This guide walks through both portals as they work <strong>today</strong> (Phase-1/2 mock, on
+in-memory data). The interactions are real; the data is seeded. Where live
+behaviour will differ, it's called out.</p>
+<h2 id="run-the-portals">Run the portals<a class="headerlink" href="#run-the-portals" title="Permanent link">#</a></h2>
+<p>Each app is a standard Flutter Web project. From either repo:</p>
+<pre><code class="language-bash">flutter pub get
+flutter run -d chrome
+</code></pre>
+<p>The shared design system and data layer come from <code>devportal_shared</code> (a local
+<code>path:</code> dependency) — no extra setup. To be explicit about the data source:</p>
+<pre><code class="language-bash">flutter run -d chrome --dart-define=DATA_SOURCE=mock   # only mock is wired today
+</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">Demo credentials</p>
+<p><strong>External portal:</strong> no credentials — click <strong>Continue with SSO</strong> (you're mapped
+to demo developer <code>dev@example.com</code>, so the seeded apps show).
+<strong>Internal console:</strong> sign in with <code>admin</code> / <code>passWORD1234#</code> (there's a <strong>Fill</strong>
+button). Both stand in for the ForgeRock SSO used in production.</p>
+</div>
+<hr />
+<h2 id="for-external-developers">For external developers<a class="headerlink" href="#for-external-developers" title="Permanent link">#</a></h2>
+<p>The self-service journey, in order. This is the happy path the portal is built
+around.</p>
+<h3 id="1-sign-in">1. Sign in<a class="headerlink" href="#1-sign-in" title="Permanent link">#</a></h3>
+<p>Click <strong>Continue with SSO</strong>. No form — the stub signs you in and routes you to the
+home page. <em>(Live: this runs the OIDC Authorization Code + PKCE flow against
+ForgeRock.)</em></p>
+<h3 id="2-browse-the-catalog">2. Browse the catalog<a class="headerlink" href="#2-browse-the-catalog" title="Permanent link">#</a></h3>
+<ul>
+<li>The <strong>home</strong> page leads with a hero spotlight and carousels of featured products.</li>
+<li><strong>Catalog</strong> lists every API product; use <strong>search</strong> and <strong>filters</strong> to narrow by
+  category or access level.</li>
+<li>The headline APIs are the <strong>BIAN payment</strong> products: <em>Payment Initiation</em>,
+  <em>Payment Order</em>, <em>Payment Execution</em>.</li>
+</ul>
+<h3 id="3-open-a-product">3. Open a product<a class="headerlink" href="#3-open-a-product" title="Permanent link">#</a></h3>
+<p>Each product detail page has three tabs:</p>
+<ul>
+<li><strong>Overview</strong> — what the API does, access level, and which scopes/products it needs.</li>
+<li><strong>Documentation</strong> — endpoints, parameters, and example payloads.</li>
+<li><strong>Try it</strong> — an interactive console: pick an operation, edit the request, and send.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Try-it today vs. live</p>
+<p>On the mock, <strong>Try-it</strong> returns a representative response so you can see the
+shape and status handling. Live, it calls the deployed BIAN proxy with your
+app's credentials and shows the real response.</p>
+</div>
+<h3 id="4-register-an-app">4. Register an app<a class="headerlink" href="#4-register-an-app" title="Permanent link">#</a></h3>
+<p>To get credentials, register an app:</p>
+<ol>
+<li>Go to <strong>My apps → Register app</strong>.</li>
+<li>Name the app and select the <strong>products</strong> it should access.</li>
+<li>Submit. <strong>Public</strong> products <strong>auto-approve</strong>; <strong>restricted</strong> (partner/internal)
+   products go to the internal <strong>approval queue</strong>.</li>
+</ol>
+<h3 id="5-get-your-keys">5. Get your keys<a class="headerlink" href="#5-get-your-keys" title="Permanent link">#</a></h3>
+<p>Open the app from <strong>My apps → App detail</strong>:</p>
+<ul>
+<li><strong>Reveal</strong> and <strong>copy</strong> the consumer key/secret.</li>
+<li>See the <strong>products</strong> the app is entitled to and each one's status.</li>
+<li>Watch <strong>usage analytics</strong> (traffic, latency, errors) for that app.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Keys belong to the app, not to you</p>
+<p>Signing in identifies <em>you</em>; the API keys are minted for the <em>app</em> you
+registered. One developer can own several apps, each with its own keys.</p>
+</div>
+<h3 id="6-run-an-end-to-end-flow">6. Run an end-to-end flow<a class="headerlink" href="#6-run-an-end-to-end-flow" title="Permanent link">#</a></h3>
+<p><strong>Flows</strong> are guided steppers that chain the three payment APIs into a realistic
+journey:</p>
+<ul>
+<li><strong>Internal transfer</strong> (book transfer) — Initiation → Order → Execution.</li>
+<li><strong>External transfer</strong> — the same, plus a <strong>clearing/settlement</strong> step.</li>
+</ul>
+<p>Each step shows the request, the response, and how one call's output feeds the next
+— a fast way to understand the API program without writing code.</p>
+<h3 id="7-track-usage">7. Track usage<a class="headerlink" href="#7-track-usage" title="Permanent link">#</a></h3>
+<p>Back on <strong>App detail</strong> (or the dashboard), the analytics widgets show your app's
+traffic, latency, and error mix over time. <em>(Live: served from the Apigee stats API
+via the BFF.)</em></p>
+<hr />
+<h2 id="for-the-internal-api-team">For the internal API team<a class="headerlink" href="#for-the-internal-api-team" title="Permanent link">#</a></h2>
+<p>The admin console produces and governs what external developers consume.</p>
+<h3 id="1-sign-in_1">1. Sign in<a class="headerlink" href="#1-sign-in_1" title="Permanent link">#</a></h3>
+<p>Open <code>devportal-internal</code>, sign in with <code>admin</code> / <code>passWORD1234#</code> (or click
+<strong>Fill</strong>). You land on the operations dashboard. <em>(Live: corporate SSO via ForgeRock,
+behind Identity-Aware Proxy.)</em></p>
+<h3 id="2-read-the-operations-dashboard">2. Read the operations dashboard<a class="headerlink" href="#2-read-the-operations-dashboard" title="Permanent link">#</a></h3>
+<p>At a glance: org <strong>KPIs</strong>, a <strong>traffic</strong> chart, <strong>status-code mix</strong>, <strong>top
+products/apps</strong>, and a <strong>pending approvals</strong> card. The approvals count is live — it
+reflects the queue in section 5.</p>
+<h3 id="3-publish-edit-api-products">3. Publish &amp; edit API products<a class="headerlink" href="#3-publish-edit-api-products" title="Permanent link">#</a></h3>
+<ul>
+<li><strong>Products</strong> lists every API product (the BIAN payment products and others).</li>
+<li><strong>Create</strong> a new product or <strong>Edit</strong> an existing one — name, access level,
+  description, and the proxies/scopes it bundles.</li>
+<li>Changes show in the list immediately. <em>(Mock: mutations persist for the session.
+  Live: written through Drupal to the Apigee management API.)</em></li>
+</ul>
+<h3 id="4-manage-developers">4. Manage developers<a class="headerlink" href="#4-manage-developers" title="Permanent link">#</a></h3>
+<p><strong>Developers</strong> lists registered developers with their status and app counts — the
+people on the other side of the catalog.</p>
+<h3 id="5-work-the-approval-queue">5. Work the approval queue<a class="headerlink" href="#5-work-the-approval-queue" title="Permanent link">#</a></h3>
+<p><strong>Approvals</strong> is the queue of app→product requests against <strong>restricted</strong> products:</p>
+<ol>
+<li>Review each pending request (app, developer, product).</li>
+<li><strong>Approve</strong> or <strong>Reject</strong>.</li>
+<li>The queue updates, and the dashboard's pending count drops.</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Approval policy is deferred</p>
+<p>Today the rule is simple: public products auto-approve, restricted products
+queue. The final policy (likely "mixed by product") is a Phase-6 decision; the
+queue mechanism is already real.</p>
+</div>
+<h3 id="6-analytics-settings">6. Analytics &amp; settings<a class="headerlink" href="#6-analytics-settings" title="Permanent link">#</a></h3>
+<ul>
+<li><strong>Analytics</strong> — fuller org-wide traffic, latency, and error analysis.</li>
+<li><strong>Settings</strong> — illustrative governance, identity, and <strong>monetization</strong> policy.
+  Monetization is modelled but not enforced in v1 (Phase 6).</li>
+</ul>
+<hr />
+<h2 id="quick-reference">Quick reference<a class="headerlink" href="#quick-reference" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>I want to…</th>
+<th>Portal</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Find an API</td>
+<td>External</td>
+<td>Catalog → search/filter</td>
+</tr>
+<tr>
+<td>Try a request</td>
+<td>External</td>
+<td>Product → <strong>Try it</strong></td>
+</tr>
+<tr>
+<td>Get API keys</td>
+<td>External</td>
+<td>Register app → App detail → reveal/copy</td>
+</tr>
+<tr>
+<td>See a payment journey</td>
+<td>External</td>
+<td><strong>Flows</strong></td>
+</tr>
+<tr>
+<td>Publish a product</td>
+<td>Internal</td>
+<td>Products → Create/Edit</td>
+</tr>
+<tr>
+<td>Approve app access</td>
+<td>Internal</td>
+<td>Approvals → Approve/Reject</td>
+</tr>
+<tr>
+<td>Check org traffic</td>
+<td>Internal</td>
+<td>Dashboard / Analytics</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Lost? Follow the spine</p>
+<p>External: <strong>sign in → catalog → product → try it → register app → keys → flows →
+usage.</strong> Internal: <strong>sign in → dashboard → products → developers → approvals →
+analytics.</strong> Each step builds on the last.</p>
+</div>
+      <nav class="pager"><a class="pager-prev" href="deployment.html"><span>Previous</span><strong>Deployment</strong></a></nav>
+    </article>
+    <aside class="onthispage" aria-label="On this page"><div class="otp-inner"><p class="otp-title">On this page</p><div class="toc">
+<ul>
+<li><a href="#run-the-portals">Run the portals</a></li>
+<li><a href="#for-external-developers">For external developers</a><ul>
+<li><a href="#1-sign-in">1. Sign in</a></li>
+<li><a href="#2-browse-the-catalog">2. Browse the catalog</a></li>
+<li><a href="#3-open-a-product">3. Open a product</a></li>
+<li><a href="#4-register-an-app">4. Register an app</a></li>
+<li><a href="#5-get-your-keys">5. Get your keys</a></li>
+<li><a href="#6-run-an-end-to-end-flow">6. Run an end-to-end flow</a></li>
+<li><a href="#7-track-usage">7. Track usage</a></li>
+</ul>
+</li>
+<li><a href="#for-the-internal-api-team">For the internal API team</a><ul>
+<li><a href="#1-sign-in_1">1. Sign in</a></li>
+<li><a href="#2-read-the-operations-dashboard">2. Read the operations dashboard</a></li>
+<li><a href="#3-publish-edit-api-products">3. Publish &amp; edit API products</a></li>
+<li><a href="#4-manage-developers">4. Manage developers</a></li>
+<li><a href="#5-work-the-approval-queue">5. Work the approval queue</a></li>
+<li><a href="#6-analytics-settings">6. Analytics &amp; settings</a></li>
+</ul>
+</li>
+<li><a href="#quick-reference">Quick reference</a></li>
+</ul>
+</div>
+</div></aside>
+  </main>
+</div>
+<footer class="site-foot">
+  <div>
+    <strong>Developer Portal</strong> — internal &amp; external · cinematic-dark · Bloc/Cubit + clean architecture
+  </div>
+  <div class="foot-meta">Generated from <code>docs/content/*.md</code> by <code>build.py</code>. An independent engineering reference; “Apigee” and “Google Cloud” are marks of Google.</div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

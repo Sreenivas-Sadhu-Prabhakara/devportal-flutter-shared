@@ -1,0 +1,113 @@
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="Google Cloud deployment and delivery topology">
+  <defs>
+    <marker id="da" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#8E8E99"/></marker>
+    <marker id="daR" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 Z" fill="#E50914"/></marker>
+    <style>
+      .h{fill:#fff;font-size:13px;font-weight:700}
+      .s{fill:#9A9AA4;font-size:10.5px}
+      .lbl{fill:#6E6E7A;font-size:11px;font-weight:700;letter-spacing:1.4px}
+      .flow{fill:#8E8E99;font-size:10px;font-style:italic}
+      .chipT{fill:#D9D9DE;font-size:10.5px}
+    </style>
+  </defs>
+
+  <!-- ================= DELIVERY pipeline (left) ================= -->
+  <text class="lbl" x="34" y="44">DELIVERY</text>
+  <rect x="34" y="58" width="210" height="74" rx="11" fill="#16161C" stroke="#2A2A33"/>
+  <text class="h" x="50" y="80">GitHub repos</text>
+  <text class="s" x="50" y="97">devportal-external · -internal</text>
+  <text class="s" x="50" y="111">devportal-flutter-shared</text>
+  <text class="s" x="50" y="125">devportal-drupal</text>
+  <line x1="139" y1="132" x2="139" y2="158" stroke="#8E8E99" stroke-width="1.3" marker-end="url(#da)"/>
+  <text class="flow" x="147" y="150">push / PR</text>
+
+  <rect x="34" y="158" width="210" height="64" rx="11" fill="#16161C" stroke="#4DA3FF" stroke-opacity="0.5"/>
+  <text class="h" x="50" y="180" fill="#bcd9ff">Cloud Build</text>
+  <text class="s" x="50" y="197">flutter build web</text>
+  <text class="s" x="50" y="211">docker build (Drupal)</text>
+  <line x1="139" y1="222" x2="139" y2="248" stroke="#8E8E99" stroke-width="1.3" marker-end="url(#da)"/>
+  <text class="flow" x="147" y="240">release</text>
+
+  <rect x="34" y="248" width="210" height="62" rx="11" fill="#16161C" stroke="#2A2A33"/>
+  <text class="h" x="50" y="270">Artifact Registry</text>
+  <text class="s" x="50" y="287">web bundles · container image</text>
+  <text class="s" x="50" y="301" fill="#6E6E7A">versioned, promotable</text>
+
+  <!-- deploy arrow into GCP -->
+  <path d="M139 310 V356 H290 V300" fill="none" stroke="#E50914" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#daR)"/>
+  <text class="flow" x="150" y="350" fill="#ff7a80">deploy → eval · test · prod</text>
+
+  <!-- ================= GCP runtime (right) ================= -->
+  <rect x="286" y="34" width="682" height="528" rx="18" fill="#0E0E13" stroke="#3A3A45"/>
+  <text class="lbl" x="304" y="56" fill="#9A9AA4">GOOGLE CLOUD — PROJECT</text>
+  <text class="s" x="486" y="56" fill="#6E6E7A">env groups: eval · test · prod</text>
+
+  <!-- users -->
+  <rect x="304" y="70" width="312" height="44" rx="10" fill="#16161C" stroke="#E50914" stroke-opacity="0.5"/>
+  <text class="h" x="320" y="89" font-size="12">External developers</text>
+  <text class="s" x="320" y="105">public internet</text>
+  <rect x="636" y="70" width="316" height="44" rx="10" fill="#16161C" stroke="#7B2FF7" stroke-opacity="0.5"/>
+  <text class="h" x="652" y="89" font-size="12">Internal API team</text>
+  <text class="s" x="652" y="105">corporate SSO / network</text>
+
+  <line x1="460" y1="114" x2="460" y2="140" stroke="#8E8E99" stroke-width="1.3" marker-end="url(#da)"/>
+  <line x1="794" y1="114" x2="794" y2="140" stroke="#8E8E99" stroke-width="1.3" marker-end="url(#da)"/>
+
+  <!-- hosting -->
+  <rect x="304" y="140" width="312" height="66" rx="11" fill="#16161C" stroke="#2A2A33"/>
+  <text class="h" x="320" y="163">Firebase Hosting</text>
+  <text class="s" x="320" y="180">external portal (Flutter Web) · global CDN</text>
+  <text class="s" x="320" y="196" fill="#6E6E7A">static bundle · TLS · cache</text>
+
+  <rect x="636" y="140" width="316" height="66" rx="11" fill="#16161C" stroke="#2A2A33"/>
+  <text class="h" x="652" y="163">Internal portal + IAP</text>
+  <text class="s" x="652" y="180">Identity-Aware Proxy gates access</text>
+  <text class="s" x="652" y="196" fill="#6E6E7A">Flutter Web · staff-only</text>
+
+  <line x1="460" y1="206" x2="460" y2="244" stroke="#E50914" stroke-width="1.4" marker-end="url(#daR)"/>
+  <path d="M794 206 V224 H540 V244" fill="none" stroke="#E50914" stroke-width="1.4" marker-end="url(#daR)"/>
+  <text class="flow" x="470" y="228" fill="#ff7a80">REST / JSON:API</text>
+
+  <!-- BFF + data -->
+  <rect x="304" y="244" width="312" height="74" rx="11" fill="#16161C" stroke="#4DA3FF" stroke-opacity="0.55"/>
+  <text class="h" x="320" y="268" fill="#bcd9ff">Cloud Run — Drupal BFF</text>
+  <text class="s" x="320" y="286">containerised · autoscaled · stateless</text>
+  <text class="s" x="320" y="302" fill="#6E6E7A">headless Apigee Developer Portal Kit</text>
+
+  <rect x="636" y="244" width="150" height="74" rx="11" fill="#16161C" stroke="#0FB5BA" stroke-opacity="0.55"/>
+  <text class="h" x="652" y="268" font-size="12" fill="#7fe3e6">Cloud SQL</text>
+  <text class="s" x="652" y="285">Drupal DB</text>
+  <text class="s" x="652" y="300" fill="#6E6E7A">private IP</text>
+
+  <rect x="800" y="244" width="152" height="74" rx="11" fill="#16161C" stroke="#F5A524" stroke-opacity="0.5"/>
+  <text class="h" x="816" y="268" font-size="12" fill="#ffe2ad">Secret Manager</text>
+  <text class="s" x="816" y="285">SA key · OIDC</text>
+  <text class="s" x="816" y="300" fill="#6E6E7A">secrets</text>
+
+  <line x1="616" y1="281" x2="634" y2="281" stroke="#8E8E99" stroke-width="1.2" marker-end="url(#da)"/>
+  <line x1="786" y1="281" x2="798" y2="281" stroke="#8E8E99" stroke-width="1.2" marker-end="url(#da)"/>
+  <line x1="460" y1="318" x2="460" y2="356" stroke="#E50914" stroke-width="1.4" marker-end="url(#daR)"/>
+  <text class="flow" x="470" y="340" fill="#ff7a80">Mgmt + Stats API · SA auth</text>
+
+  <!-- external services -->
+  <rect x="304" y="356" width="312" height="62" rx="11" fill="#16161C" stroke="#F5A524" stroke-opacity="0.55"/>
+  <text class="h" x="320" y="379" fill="#ffe2ad">Apigee X</text>
+  <text class="s" x="320" y="396">org · API proxies · products · keys · analytics</text>
+  <text class="s" x="320" y="410" fill="#6E6E7A">source of truth for live data</text>
+
+  <rect x="636" y="356" width="316" height="62" rx="11" fill="#16161C" stroke="#F5A524" stroke-opacity="0.5" stroke-dasharray="5 4"/>
+  <text class="h" x="652" y="379" fill="#ffd27a">ForgeRock — OIDC IdP</text>
+  <text class="s" x="652" y="396">federated identity for both portals</text>
+  <text class="s" x="652" y="410" fill="#6E6E7A">Auth Code + PKCE · openid_connect</text>
+  <path d="M794 206 H928 V356" fill="none" stroke="#F5A524" stroke-width="1.2" stroke-opacity="0.6" stroke-dasharray="4 4" marker-end="url(#da)"/>
+
+  <!-- observability -->
+  <rect x="304" y="436" width="648" height="46" rx="11" fill="#0F0F15" stroke="#2A2A33"/>
+  <text class="h" x="320" y="458" font-size="12">Observability</text>
+  <text class="s" x="320" y="473" fill="#9A9AA4">Cloud Logging · Cloud Monitoring · Error Reporting · Apigee Analytics &amp; custom reports</text>
+
+  <!-- maturity note -->
+  <rect x="304" y="498" width="648" height="48" rx="11" fill="#0c0c11" stroke="#2A2A33"/>
+  <text class="s" x="320" y="519" fill="#9A9AA4"><tspan fill="#fff" font-weight="700">Maturity path:</tspan>  manual <tspan fill="#ffb3b6" font-family="ui-monospace,Menlo,monospace">firebase deploy</tspan> / <tspan fill="#ffb3b6" font-family="ui-monospace,Menlo,monospace">gcloud run deploy</tspan>  →  Cloud Build triggers per branch</text>
+  <text class="s" x="320" y="535" fill="#6E6E7A">→  promote eval → test → prod with approvals  →  blue/green + automated rollback</text>
+</svg>

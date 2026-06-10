@@ -5,8 +5,21 @@ the **cinematic design system**, the **domain** model, and the **data layer**
 (mock now, live later) so both apps depend on one source of truth.
 
 > Part of a polyrepo: [`devportal-external`](../devportal-external) and
-> `devportal-internal` (later) consume this package; `devportal-drupal` is the
-> headless BFF. See the portal design notes in the parent project.
+> [`devportal-internal`](../devportal-internal) consume this package;
+> `devportal-drupal` (Phase 3) is the headless BFF.
+
+## 📖 System documentation
+
+The full architecture diagram, roadmap, mock→live **integration path**, deployment
+plan, and a usage **how-to** live in **[`docs/`](docs/)** — a rendered,
+cinematic-dark documentation site that covers the whole polyrepo. Open
+`docs/index.html`, or serve it:
+
+```bash
+python3 -m http.server -d docs 8080   # http://localhost:8080
+```
+
+The product brand mark (favicon) masters live in **[`brand/`](brand/)**.
 
 ## What's inside
 

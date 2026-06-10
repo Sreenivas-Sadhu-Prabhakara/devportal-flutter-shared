@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en" data-page="architecture">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The components, who owns what, and how a request travels from a developer's browser to Apigee X.">
+<meta name="theme-color" content="#0B0B0F">
+<title>Architecture · Developer Portal Docs</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#doc">Skip to content</a>
+<header class="topbar">
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="index.html">
+<svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+  <g stroke="#FF3640" stroke-width="3" stroke-linecap="round">
+    <line x1="32" y1="32" x2="32" y2="14"/><line x1="32" y1="32" x2="48" y2="23"/>
+    <line x1="32" y1="32" x2="48" y2="41"/><line x1="32" y1="32" x2="32" y2="50"/>
+    <line x1="32" y1="32" x2="16" y2="41"/><line x1="32" y1="32" x2="16" y2="23"/>
+  </g>
+  <g fill="#fff" stroke="#E50914" stroke-width="1.7">
+    <circle cx="32" cy="14" r="4.3"/><circle cx="48" cy="23" r="4.3"/>
+    <circle cx="48" cy="41" r="4.3"/><circle cx="32" cy="50" r="4.3"/>
+    <circle cx="16" cy="41" r="4.3"/><circle cx="16" cy="23" r="4.3"/>
+  </g>
+  <circle cx="32" cy="32" r="10" fill="#E50914" stroke="#08080B"/>
+  <circle cx="32" cy="32" r="3.4" fill="#fff"/>
+</svg><span class="brand-name">Developer&nbsp;Portal</span><span class="brand-badge">Docs</span></a>
+  <nav class="top-links" aria-label="Related">
+    <a href="architecture.html">Architecture</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="how-to.html">How-to</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Documentation">
+<div class="nav-group"><span class="nav-group-label">Understand</span><ul>
+<li><a href="index.html">Overview</a></li>
+<li><a href="architecture.html" class="active" aria-current="page">Architecture</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Plan</span><ul>
+<li><a href="roadmap.html">Roadmap & what's next</a></li>
+<li><a href="integration.html">Integration path</a></li>
+<li><a href="deployment.html">Deployment</a></li>
+</ul></div>
+<div class="nav-group"><span class="nav-group-label">Use</span><ul>
+<li><a href="how-to.html">How-to guide</a></li>
+</ul></div>
+</nav></aside>
+  <div class="sidebar-scrim" hidden></div>
+  <main class="main">
+    <article class="doc" id="doc">
+      <div class="crumb"><a href="index.html">Docs</a> <span>/</span> Architecture</div>
+      <header class="doc-head">
+        <h1>Architecture</h1>
+        <p class="lede">The components, who owns what, and how a request travels from a developer's browser to Apigee X.</p>
+      </header>
+      <p>The portal is a <strong>layered system</strong>: a presentation tier (two Flutter Web apps on
+a shared package), a backend-for-frontend (headless Drupal), the Apigee X control
+plane, and Google Cloud underneath — with ForgeRock supplying identity. Today only
+the presentation tier exists, running on mock data; the tiers below it are the
+build targets for Phases 3–5.</p>
+<figure class="diagram">
+  <img src="assets/diagrams/architecture.svg" alt="The layered architecture diagram showing users, presentation, BFF, platform and cloud tiers.">
+  <figcaption><strong>Figure 1.</strong> Target architecture, top to bottom. Each tier is dissected below.</figcaption>
+</figure>
+
+<h2 id="tier-1-presentation-flutter-web">Tier 1 — Presentation (Flutter Web)<a class="headerlink" href="#tier-1-presentation-flutter-web" title="Permanent link">#</a></h2>
+<p>Two <strong>separately deployable</strong> apps that share one package. Keeping them separate
+means the public app and the staff console have independent release cadences,
+hosting, and security postures; sharing a package means the design system, domain
+model, and data contracts never drift between them.</p>
+<h3 id="devportal-external-the-public-portal"><code>devportal-external</code> — the public portal<a class="headerlink" href="#devportal-external-the-public-portal" title="Permanent link">#</a></h3>
+<p>The self-service experience for third-party developers:</p>
+<ul>
+<li><strong>Catalog &amp; docs</strong> — browse and search API products; per-product overview,
+  documentation, and an interactive <strong>Try-it</strong> console.</li>
+<li><strong>Apps &amp; keys</strong> — register an app, receive credentials, reveal/copy keys, see
+  which products an app is entitled to.</li>
+<li><strong>Flows</strong> — guided steppers that chain the BIAN payment APIs end to end (an
+  internal <em>book transfer</em>; an external transfer that adds a clearing/settlement
+  step).</li>
+<li><strong>Usage</strong> — per-app analytics (traffic, latency, errors).</li>
+</ul>
+<h3 id="devportal-internal-the-admin-console"><code>devportal-internal</code> — the admin console<a class="headerlink" href="#devportal-internal-the-admin-console" title="Permanent link">#</a></h3>
+<p>A login-gated, left-rail admin shell for the API team:</p>
+<ul>
+<li><strong>Operations dashboard</strong> — org KPIs, traffic, status-code mix, top products/apps,
+  pending approvals.</li>
+<li><strong>Products</strong> — create and edit API products (CRUD; mutations persist in-session).</li>
+<li><strong>Developers</strong> — registered developers, status, app counts.</li>
+<li><strong>Approvals</strong> — the queue of app→product access requests; approve/reject updates
+  the dashboard.</li>
+<li><strong>Analytics</strong> &amp; <strong>Settings</strong> — fuller org analytics and illustrative governance,
+  identity, and monetization policy.</li>
+</ul>
+<h3 id="devportal_shared-the-shared-core"><code>devportal_shared</code> — the shared core<a class="headerlink" href="#devportal_shared-the-shared-core" title="Permanent link">#</a></h3>
+<p>One Flutter package, three layers, consumed by both apps via a local <code>path:</code>
+dependency:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Holds</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>theme/</code></td>
+<td><code>tokens.dart</code>, <code>app_theme.dart</code></td>
+<td>The only place raw brand values live</td>
+</tr>
+<tr>
+<td><code>widgets/</code></td>
+<td>PortalMark, PosterCard, Carousel, HeroSpotlight, MetricTile, charts</td>
+<td>Cinematic design system</td>
+</tr>
+<tr>
+<td><code>domain/</code></td>
+<td>entities + <strong>repository interfaces</strong></td>
+<td>The abstraction the UI depends on</td>
+</tr>
+<tr>
+<td><code>data/</code></td>
+<td><code>fixtures/</code> (JSON) + <code>mock/</code> repositories</td>
+<td>Live implementations drop in here later</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">The architectural keystone</p>
+<p>The presentation and Bloc layers depend <strong>only</strong> on the repository interfaces
+in <code>domain/</code>. They never see JSON, HTTP, Drupal, or Apigee. That single rule
+is what makes the mock-to-live switch a contained, data-layer-only change —
+detailed on the <a href="integration.html">Integration path</a>.</p>
+</div>
+<h2 id="tier-2-backend-for-frontend-headless-drupal-phase-3">Tier 2 — Backend-for-frontend (headless Drupal) · Phase 3<a class="headerlink" href="#tier-2-backend-for-frontend-headless-drupal-phase-3" title="Permanent link">#</a></h2>
+<p>A <strong>headless Drupal</strong> site, built on the Apigee Developer Portal Kit, acts as the
+BFF between Flutter and Apigee X. Drupal is used <strong>API-only</strong> — no themed Drupal
+pages are served to end users.</p>
+<ul>
+<li><strong><code>apigee_edge</code></strong> — connects Drupal to the Apigee X org (developers, apps, keys).</li>
+<li><strong><code>apigee_api_catalog</code></strong> — manages API products and their documentation.</li>
+<li><strong><code>apigee_kickstart</code></strong> — the installation profile that wires these together.</li>
+<li><strong><code>openid_connect</code></strong> — federates ForgeRock identity into a Drupal user, which
+  maps to an Apigee developer.</li>
+<li>A <strong>custom REST endpoint</strong> reshapes the Apigee <strong>analytics (stats) API</strong> into the
+  compact JSON the dashboards expect.</li>
+</ul>
+<p>Flutter reaches Drupal over <strong>JSON:API / custom REST</strong> with a bearer token; Drupal
+reaches Apigee X with a <strong>GCP service account</strong>.</p>
+<h2 id="tier-3-platform-apigee-x-phase-4">Tier 3 — Platform (Apigee X) · Phase 4<a class="headerlink" href="#tier-3-platform-apigee-x-phase-4" title="Permanent link">#</a></h2>
+<p>Apigee X is the control plane and the <strong>source of truth for live data</strong>:</p>
+<ul>
+<li><strong>Management API</strong> — products, apps, keys, developers.</li>
+<li><strong>Analytics / Stats API</strong> — traffic, latency, and error metrics.</li>
+<li><strong>Runtime</strong> — the deployed API proxies themselves: the <strong>BIAN payment APIs</strong> the
+  external Try-it console calls, fronted by OAuth.</li>
+</ul>
+<h2 id="tier-4-identity-forgerock-oidc">Tier 4 — Identity (ForgeRock, OIDC)<a class="headerlink" href="#tier-4-identity-forgerock-oidc" title="Permanent link">#</a></h2>
+<p>Identity is federated, not owned by the portal:</p>
+<ul>
+<li>In the browser, each Flutter app runs the <strong>Authorization Code + PKCE</strong> flow
+  against ForgeRock.</li>
+<li>In Drupal, <code>openid_connect</code> federates the ForgeRock identity to a Drupal user →
+  Apigee developer.</li>
+<li><strong>Portal login ≠ app consumer keys.</strong> Signing in identifies the <em>person</em>; the API
+  keys belong to the <em>apps</em> they register.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Mock stands in for identity today</p>
+<p>Until Phase 4, identity is stubbed: the external portal's <em>Continue with SSO</em>
+needs no credentials (and maps to demo developer <code>dev@example.com</code>), and the
+internal console uses a hardcoded <code>admin</code> / <code>passWORD1234#</code> gate. These are
+placeholders for the ForgeRock OIDC flow — never ship them.</p>
+</div>
+<h2 id="tier-5-google-cloud">Tier 5 — Google Cloud<a class="headerlink" href="#tier-5-google-cloud" title="Permanent link">#</a></h2>
+<p>The whole thing runs GCP-native: Drupal on <strong>Cloud Run</strong> with <strong>Cloud SQL</strong>,
+Flutter Web on <strong>Firebase Hosting</strong> behind a CDN, the internal app additionally
+behind <strong>Identity-Aware Proxy</strong>, secrets in <strong>Secret Manager</strong>. Full topology on
+the <a href="deployment.html">Deployment</a> page.</p>
+<h2 id="how-a-request-flows-target-state">How a request flows (target state)<a class="headerlink" href="#how-a-request-flows-target-state" title="Permanent link">#</a></h2>
+<ol>
+<li>A developer opens the portal; Flutter loads from the CDN.</li>
+<li>They sign in — the app runs <strong>OIDC Auth Code + PKCE</strong> against ForgeRock and gets
+   a token.</li>
+<li>A page asks its Cubit for data; the Cubit calls a <strong>repository interface</strong>.</li>
+<li>The <strong>Live</strong> repository implementation issues an HTTPS request to <strong>Drupal</strong>
+   (<code>JSON:API</code> / custom REST) with the bearer token.</li>
+<li>Drupal calls the <strong>Apigee X</strong> management or stats API using the <strong>service
+   account</strong>, reshapes the response, and returns compact JSON.</li>
+<li>The Cubit emits state; the widget rebuilds. The UI code is identical to the mock
+   path — only the repository implementation changed.</li>
+</ol>
+<h2 id="current-vs-target">Current vs. target<a class="headerlink" href="#current-vs-target" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Today (mock)</th>
+<th>Target (Phase 4+)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data source</td>
+<td>In-memory JSON fixtures</td>
+<td>Live repos → Drupal → Apigee X</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>Stub SSO / hardcoded login</td>
+<td>ForgeRock OIDC (Auth Code + PKCE)</td>
+</tr>
+<tr>
+<td>Keys &amp; products</td>
+<td>Seeded fixtures</td>
+<td>Real Apigee apps, keys, products</td>
+</tr>
+<tr>
+<td>Try-it</td>
+<td>Simulated responses</td>
+<td>Real calls to deployed BIAN proxies</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Fixture series</td>
+<td>Apigee stats API via custom REST</td>
+</tr>
+<tr>
+<td>Hosting</td>
+<td><code>flutter run</code> locally</td>
+<td>Firebase Hosting + Cloud Run on GCP</td>
+</tr>
+</tbody>
+</table>
+      <nav class="pager"><a class="pager-prev" href="index.html"><span>Previous</span><strong>Overview</strong></a><a class="pager-next" href="roadmap.html"><span>Next</span><strong>Roadmap & what's next</strong></a></nav>
+    </article>
+    <aside class="onthispage" aria-label="On this page"><div class="otp-inner"><p class="otp-title">On this page</p><div class="toc">
+<ul>
+<li><a href="#tier-1-presentation-flutter-web">Tier 1 — Presentation (Flutter Web)</a><ul>
+<li><a href="#devportal-external-the-public-portal">devportal-external — the public portal</a></li>
+<li><a href="#devportal-internal-the-admin-console">devportal-internal — the admin console</a></li>
+<li><a href="#devportal_shared-the-shared-core">devportal_shared — the shared core</a></li>
+</ul>
+</li>
+<li><a href="#tier-2-backend-for-frontend-headless-drupal-phase-3">Tier 2 — Backend-for-frontend (headless Drupal) · Phase 3</a></li>
+<li><a href="#tier-3-platform-apigee-x-phase-4">Tier 3 — Platform (Apigee X) · Phase 4</a></li>
+<li><a href="#tier-4-identity-forgerock-oidc">Tier 4 — Identity (ForgeRock, OIDC)</a></li>
+<li><a href="#tier-5-google-cloud">Tier 5 — Google Cloud</a></li>
+<li><a href="#how-a-request-flows-target-state">How a request flows (target state)</a></li>
+<li><a href="#current-vs-target">Current vs. target</a></li>
+</ul>
+</div>
+</div></aside>
+  </main>
+</div>
+<footer class="site-foot">
+  <div>
+    <strong>Developer Portal</strong> — internal &amp; external · cinematic-dark · Bloc/Cubit + clean architecture
+  </div>
+  <div class="foot-meta">Generated from <code>docs/content/*.md</code> by <code>build.py</code>. An independent engineering reference; “Apigee” and “Google Cloud” are marks of Google.</div>
+</footer>
+<script src="assets/site.js" defer></script>
+</body>
+</html>
